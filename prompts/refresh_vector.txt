@@ -47,7 +47,7 @@ Get a rectangle and its reference points:
 
 Target class(es) selection:
 A vectors selector can be instantiated by specifying the document(doc), page number(pagenumber), and clip like this:
-"selector = PDFbf.select_from_drawings(doc=fitz.document, pagenumber=int, clip=rectangle)"
+"selector = PDFbf.selector(doc=fitz.document, pagenumber=int, clip=rectangle)"
 The selector is to select a subgroup from drawings with two optional selection modes. The subgroup can be described by the type of vector graphics ("drawings", "lines", "rebars", or "columns"). There are two selection modes: 1. Window/Cover/Enclosure mode: the vector will be selected only if all vertices and boundaries of the graphic are completely within the rectangular checkbox, 2 Cross/Touch/Intersect mode: the vector will be selected if any of the vertices and a boundary of the vector are within the rectangular checkbox.
 Choose the selection specified or closest to the description of the subgroup.
 You can get a list of a subgroup with a specified selection mode by calling these functions:
