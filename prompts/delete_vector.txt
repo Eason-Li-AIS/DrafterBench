@@ -141,7 +141,7 @@ doc = repairer2.del_repair()
 # Mission 4
 missing_information3='''file-level: sdh.pdf, page-level:18, order-level:2, base-level: delete(incomplete)'''
 recorder3 = PDFbf.recorder(missing_information=missing_information3)
-recorder3.recording
+recorder3.recording()
 
 updatedfilepath = filepath[:-4] + "_updated.pdf"
 doc.save(updatedfilepath)
