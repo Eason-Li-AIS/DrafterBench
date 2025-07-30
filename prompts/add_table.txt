@@ -57,7 +57,7 @@ A missing key attribute recorder can be instantiated to record the incomplete in
 "recorder = PDFbf.recorder(missing_information=str)"
 Where "missing_information" is a string indicating the missing information, the standard format is '''file-level: value or missing, page-level: value or missing, order-level: value or missing, base-level: the relevant part of the original instruction, missing if there is no such part, fill in the relevant part of the original instruction and mark it as 'incomplete' in brackets if there is a relevant part but not enough necessary information'''.
 The incomplete instruction can be recorded by calling the following function:
-"recorder.recording"
+"recorder.recording()"
 
 
 Here is an example:
