@@ -884,7 +884,7 @@ class recorder:
         self.file, self.page, self.order, self.action, self.complete = (
             missing_structure(missing_information)
         )
-        self.doc = doctrack(fileobject(self.file))
+        self.doc = open(self.file)
         self.page, self.page_index = page_track(self.doc, self.page)
         self.rect, self.rect_index = rect_track(
             self.doc,
