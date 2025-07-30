@@ -94,7 +94,7 @@ A missing key attribute recorder can be instantiated to record the incomplete in
 "recorder = PDFbf.recorder(missing_information=str)"
 Where "missing_information" is a string indicating the highest-level of missing information, a standard format is '''file-level: value or missing, page-level: value or missing, order-level: value or missing, base-level: related part in the original instruction or missing(if no related part) or related part in the original instruction following with an "incomplete" in brackets (if there is some related description but some necessary information is missing)'''.
 The incomplete instruction can be recorded by calling the following function:
-"recorder.recording"
+"recorder.recording()"
 
 
 Here is an example. You should respond in the same way.
@@ -137,7 +137,7 @@ doc = table_manipulator0.addtable()
 #Lacking necessary information
 missing_information1='''file-level: De222lsfqweete_table.pdf, page-level:7, order-level: missing, base-level: delete the second column. Clear the table.'''
 recorder1 = PDFbf.recorder(missing_information=missing_information1)
-recorder1.recording
+recorder1.recording()
 
 
 #Task 3
