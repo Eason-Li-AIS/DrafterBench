@@ -122,6 +122,7 @@ python evaluation.py --model gpt-4o-2024-08-06 --model-provider openai --tempera
 |Comprehensive rewards|84\.04/0.05|76\.80/0.23|77\.88/1.09|65\.42/0.02|78\.06 /2.55|72\.24/2.33|73\.39/0.45|71\.74/0.81|69\.94/0.20|64\.96/2.44|
 
 Note: We have recently upgraded DrafterBench to be more challenging. Although the trend of models' ability is very consistent with the above leaderboard, some models may score lower than the records.
+The score on the leaderboard is the average of three independent runs.
 
 ## Citation
 
