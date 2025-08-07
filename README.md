@@ -119,7 +119,7 @@ python evaluation.py --model gpt-4o-2024-08-06 --model-provider openai --tempera
 |Single operation|86\.11/0.06|80\.01/0.20|81\.80/0.62|69\.88/0.01|81\.35/0.91|75\.79/1.91|75\.91/0.91|76\.73/0.15|75\.16/0.27|70\.85/2.17|
 |Multiple operations|85\.84/0.07|79\.75/0.69|76\.17/1.57|67\.66/0.14|78\.14/2.17|73\.00/1.81|75\.41/0.20|69\.33/2.69|67\.53/1.18|63\.14/1.75|
 |Average tasks|86\.03/0.05|79\.93/0.15|80\.16/0.85|69\.23/0.01|80\.49/1.53|74\.95/1.81|75\.85/0.36|74\.69/0.83|72\.85/0.16|68\.52/2.02|
-|Comprehensive rewards|84\.04/0.05|76\.80/0.23|77\.88/1.09|65\.42/0.02|78\.06 /2.55|72\.24/2.33|73\.39/0.45|71\.74/0.81|69\.94/0.20|64\.96/2.44|
+|Comprehensive rewards|84\.04/0.05|76\.80/0.23|77\.88/1.09|65\.42/0.02|78\.06/2.55|72\.24/2.33|73\.39/0.45|71\.74/0.81|69\.94/0.20|64\.96/2.44|
 
 Note: We have recently upgraded DrafterBench to be more challenging. Although the trend of models' ability is very consistent with the above leaderboard, some models may score lower than the records.
 The score on the leaderboard is the average of three independent runs.
