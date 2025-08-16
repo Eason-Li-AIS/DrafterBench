@@ -30,11 +30,15 @@ class Drafter_agent:
                     temperature=self.temperature,
                 )
             else:
-                client = OpenAI(base_url=self.vllm_url)
+                client = OpenAI( 
+                    base_url=self.vllm_url  # litellm-proxy-base url
+                )
+
                 res = client.chat.completions.create(
                     model=self.model,
                     messages=messages,
-                    temperature=self.temperature,
+                    max_tokens=2000
+
                 )
             response = res.choices[0].message.content
             code_search = re.search(r"`python\s*([^`]+)`", response)
