@@ -26,7 +26,6 @@ class Drafter_agent:
             if not self.vllm_url:
                 res = completion(
                     model=self.model,
-                    custom_llm_provider=self.provider,
                     messages=messages,
                     temperature=self.temperature,
                 )
