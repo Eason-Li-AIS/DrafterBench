@@ -21,6 +21,7 @@ def execute_code(code_string):
         signal.signal(signal.SIGALRM, timeout_handler)
         signal.alarm(5)
         exec(code_string, variables)
+        signal.alarm(0)
         code_information = copy.deepcopy(variables["testf"].functions.taskinformation)
     except Exception as e:
         code_information = []
