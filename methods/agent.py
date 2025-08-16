@@ -37,8 +37,8 @@ class Drafter_agent:
                 res = client.chat.completions.create(
                     model=self.model,
                     messages=messages,
-                    max_tokens=2000
-
+                    max_tokens=2500，
+                    temperature=self.temperature
                 )
             response = res.choices[0].message.content
             code_search = re.search(r"`python\s*([^`]+)`", response)
