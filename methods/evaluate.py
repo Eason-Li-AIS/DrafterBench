@@ -5,6 +5,7 @@ import numpy as np
 import datetime
 import sys
 import os
+import json
 from tqdm import tqdm
 from functools import partial
 from datasets import DatasetDict, Dataset, load_dataset
@@ -58,11 +59,22 @@ def evaluate(args):
     print(f"{args}")
     print(f"Running tasks in {args.task_group} set(s)")
     os.makedirs(f"{args.result_dir}/{args.model.replace('/', '_')}", exist_ok=True)
-    result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
+    
+    data = Manager().list()
+    response_results = Manager().list()
+    if os.path.exists(args.results_path):
+        with open(args.results_path, "r", encoding="utf-8") as f:
+            results_saved = json.load(f)
+        response_results.extend(results_saved)
+        data.extend(results_saved)
+        result_path = args.results_path
+        print(f"Resumed {len(results_saved)} items from {result_path} ...")
+    else:
+        result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
+
     if args.exp_name == "default_name":
         args.exp_name = f"{args.model.replace('/', '_')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}"
-    response_results = Manager().list()
-    data = Manager().list()
+
     max_length = 1920
     task_messages = load_dataset("Eason666/DrafterBench", "drafter_tasks")
     specified_instructions = []
@@ -90,6 +102,14 @@ def evaluate(args):
                     ]
                     if args.task_group in task_parameters:
                         specified_instructions.append(task_messages[task_set][i])
+    
+    completed_ids = {
+        (item["Tasktype"], item["Id"]) for item in response_results
+    }
+    specified_instructions = [
+        task for task in specified_instructions
+        if (task["Tasktype"], task["Id"]) not in completed_ids
+    ]
     ctx = multiprocessing.get_context("spawn")
     pool1 = ctx.Pool(processes=args.proc_num)
     print("Getting agent responses:")
@@ -98,7 +118,7 @@ def evaluate(args):
     )
     r = list(
         tqdm(
-            pool1.imap(generator_partial, specified_instructions),
+            pool1.imap_unordered(generator_partial, specified_instructions),
             total=len(specified_instructions),
         )
     )
@@ -112,7 +132,7 @@ def evaluate(args):
     print("Evaluating agent responses:")
     evaluator_partial = partial(evaluator, result_path, eval_results)
     responses = copy.deepcopy(list(response_results))
-    p = list(tqdm(pool2.imap(evaluator_partial, responses), total=len(responses)))
+    p = list(tqdm(pool2.imap_unordered(evaluator_partial, responses), total=len(responses)))
     pool2.close()
     pool2.join()
 
