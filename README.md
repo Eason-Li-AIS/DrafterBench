@@ -104,6 +104,14 @@ python evaluation.py --model gpt-4o-2024-08-06 --model-provider openai --tempera
   ```
 - The default prompts for 12 tasks can be found in ./prompts. You are encouraged to develop your own prompts to achieve a higher score. To do so, simply replace the default prompts in .txt file with your new prompts.
 
+- In case the evaluation is unexpectedly interrupted, DrafterBench supports resuming from existing results. You can specify the result file for resuming in the --resume_from flag. Alternatively, you can set the --auto_resume flag to True, and DrafterBench will automatically search the result directory for the latest file that matches the model name and task group, and resume the remaining evaluation process.
+  ```shell
+  python evaluation.py --model gpt-4o-2024-08-06 --model-provider openai --task_group Structured --resume_from *****.json
+  ```
+  ```shell
+  python evaluation.py --model gpt-4o-2024-08-06 --model-provider openai --task_group Structured --auto_resume True
+  ```
+
 ## :mortar_board: <span id="leaderboard">LeaderBoard</span>
 
 |Metric|o3-2025-04-16 (Mean/Var)|o4-mini-2025-04-16 (Mean/Var)|gpt-4.1-2025-0414 (Mean/Var)|gpt-4o-mini (Mean/Var)|o1-2024-12-17 (Mean/Var)|gpt-4o-2024-08-06 (Mean / Var)|claude-3.5-sonnet-2024-1022 (Mean / Var)|DeepSeek-V3-0324 (Mean / Var)|Qwen2.5-72B-Instruct (Mean / Var)|LLaMA3-70B-Instruct (Mean / Var)|
