@@ -80,9 +80,10 @@ def evaluate(args):
                 result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
             else:
                 print("Stop running DrafterBench")
-        files.sort(key=lambda p: os.path.getmtime(p), reverse=True)
-        resume_path = files[0]
-        print(f"Find existing results archive: {resume_path}")
+        else:
+            files.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+            resume_path = files[0]
+            print(f"Find existing results archive: {resume_path}")
     else:
         result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
     
@@ -90,7 +91,7 @@ def evaluate(args):
         try:
             with open(resume_path, "r", encoding="utf-8") as f:
                 results_saved = json.load(f)
-        except Expection as e:
+        except Exception as e:
             print(f"[Error] Faile to load saved results: {e}")
             return
         response_results.extend(results_saved)
