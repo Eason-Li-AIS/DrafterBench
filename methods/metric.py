@@ -3,9 +3,8 @@ import numpy as np
 from sentence_transformers import SentenceTransformer, util
 
 #
-model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")
 #
-
 
 def similarity(str1, str2):
     str1_embedding = model.encode(str1, convert_to_tensor=True)

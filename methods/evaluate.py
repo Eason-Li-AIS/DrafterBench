@@ -5,6 +5,8 @@ import numpy as np
 import datetime
 import sys
 import os
+import json
+import glob
 from tqdm import tqdm
 from functools import partial
 from datasets import DatasetDict, Dataset, load_dataset
@@ -15,7 +17,6 @@ sys.path.append(os.path.abspath(".."))
 sys.path.append(os.path.abspath("../.."))
 
 from DrafterBench.methods.generator import generator
-
 
 def score_format(da):
     def calculate_score(success_count, total_count):
@@ -58,12 +59,44 @@ def evaluate(args):
     print(f"{args}")
     print(f"Running tasks in {args.task_group} set(s)")
     os.makedirs(f"{args.result_dir}/{args.model.replace('/', '_')}", exist_ok=True)
-    result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
     if args.exp_name == "default_name":
         args.exp_name = f"{args.model.replace('/', '_')}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}"
+    
+
     response_results = Manager().list()
-    data = Manager().list()
     max_length = 1920
+    resume_path = None
+    if args.resume_from:
+        resume_path = args.resume_from
+    elif args.auto_resume:
+        result_dir = f"{args.result_dir}/{args.model.replace('/', '_')}"
+        pattern = os.path.join(result_dir, f"*_{args.task_group}.json")
+        files = glob.glob(pattern)
+        if not files:
+            print("No saved results found in {{args.result_dir}/{args.model.replace('/', '_')}}")
+            user_input = input("Would you like to run a new assessment? (Yes/No):")
+            if user_input == "Yes":
+                print("Run a new assessment")
+                result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
+            else:
+                print("Stop running DrafterBench")
+        files.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+        resume_path = files[0]
+        print(f"Find existing results archive: {resume_path}")
+    else:
+        result_path = f"{args.result_dir}/{args.model.replace('/', '_')}/{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}_{args.task_group}.json"
+    
+    if resume_path:
+        try:
+            with open(resume_path, "r", encoding="utf-8") as f:
+                results_saved = json.load(f)
+        except Expection as e:
+            print(f"[Error] Faile to load saved results: {e}")
+            return
+        response_results.extend(results_saved)
+        result_path = resume_path
+        print(f"Resumed {len(results_saved)} items from {resume_path} ...")
+
     task_messages = load_dataset("Eason666/DrafterBench", "drafter_tasks")
     specified_instructions = []
     for task_set in task_sets:
@@ -90,20 +123,37 @@ def evaluate(args):
                     ]
                     if args.task_group in task_parameters:
                         specified_instructions.append(task_messages[task_set][i])
+    
+    completed_ids = {
+        (item["Tasktype"], item["Id"]) for item in response_results
+    }
+    remaining = len(specified_instructions) - len(completed_ids)
+    if not remaining:
+        print("[Resume] No remaining tasks. Skipping generation.")
+    else:
+        print(f"[Gen] Total tasks: {len(specified_instructions)} | Remaining: {remaining}")
+
+
+    
     ctx = multiprocessing.get_context("spawn")
-    pool1 = ctx.Pool(processes=args.proc_num)
-    print("Getting agent responses:")
-    generator_partial = partial(
-        generator, args.model, args.model_provider, args.temperature, args.vllm_url, max_length, response_results, data, result_path
-    )
-    r = list(
-        tqdm(
-            pool1.imap(generator_partial, specified_instructions),
-            total=len(specified_instructions),
+    if remaining:
+        specified_instructions = [
+            task for task in specified_instructions
+            if (task["Tasktype"], task["Id"]) not in completed_ids
+        ]
+        pool1 = ctx.Pool(processes=args.proc_num)
+        print("Getting agent responses:")
+        generator_partial = partial(
+            generator, args.model, args.model_provider, args.temperature, args.vllm_url, max_length, response_results, result_path
         )
-    )
-    pool1.close()
-    pool1.join()
+        r = list(
+            tqdm(
+                pool1.imap_unordered(generator_partial, specified_instructions),
+                total=len(specified_instructions),
+            )
+        )
+        pool1.close()
+        pool1.join()
 
     from DrafterBench.methods.evaluator import evaluator
 
@@ -112,7 +162,7 @@ def evaluate(args):
     print("Evaluating agent responses:")
     evaluator_partial = partial(evaluator, result_path, eval_results)
     responses = copy.deepcopy(list(response_results))
-    p = list(tqdm(pool2.imap(evaluator_partial, responses), total=len(responses)))
+    p = list(tqdm(pool2.imap_unordered(evaluator_partial, responses), total=len(responses)))
     pool2.close()
     pool2.join()
 
