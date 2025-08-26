@@ -7,8 +7,7 @@ sys.path.append(os.path.abspath(".."))
 
 from DrafterBench.methods import metric
 from DrafterBench.utils.types import Score_builder
-from DrafterBench.methods.collect_result import collect_result
-
+from DrafterBench.methods.collect_result import collect_result, process_code, execute_code
 
 def openfile(file):
     f = open(file, "r", encoding="utf-8")
@@ -22,14 +21,20 @@ def savedate(data, jsonpath):
 
 
 def evaluator(result_path, eval_result, response_result):
-    ground_details = metric.ground_check(response_result["Groundpath"])
+    test_code = response_result["Response_code"]
+    test_code = process_code(test_code)
+    test_info = execute_code(test_code)
+    ground_code = response_result["Groundtruth"]
+    ground_code = process_code(ground_code)
+    ground_info = execute_code(ground_code)
+    ground_details = metric.ground_check(ground_info)
     prompt_score = (
         Score_builder()
         .ground_fill(ground_details)
         .result(
             *metric.cross_check(
-                response_result["Groundpath"],
-                response_result["Testpath"],
+                ground_info,
+                test_info,
                 (
                     "precise"
                     if response_result["Precise|Vague"] == "Precise"
@@ -37,13 +42,11 @@ def evaluator(result_path, eval_result, response_result):
                 ),
             )
         )
-        if response_result["Testpath"]
+        if test_info
         else Score_builder().ground_fill(ground_details).fail()
     )
     response_result.update(collect_result(prompt_score))
-    del response_result["Groundpath"]
-    del response_result["Testpath"]
     eval_result.append(response_result)
     eval_data = list(eval_result)
-    savedate(eval_data, result_path)
+    savedate(eval_data, result_path.replace(".json", "_score.json"))
     return eval_result
