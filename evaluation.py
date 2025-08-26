@@ -51,6 +51,7 @@ def parse_args():
     parser.add_argument("--huggingface_user_name", type=str, default=None)
     parser.add_argument("--huggingface_private", type=bool, default=True)
     parser.add_argument("--vllm_url", type=str, default=None)
+    parser.add_argument("--results_path", type=str, default="")
     args = parser.parse_args()
 
     return args
