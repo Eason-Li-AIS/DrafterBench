@@ -98,7 +98,7 @@ rectangleorder1 = 1
 rectangle1, rfpoint1 = annoextractor.getclip_rfpoint(pagenumber=pagenumber1,rectangleorder=rectangleorder1)
 # Mapping 3
 argument2 = dict(clip=rectangle1, move=[-10, -20, rfpoint1])
-table_project2 = PDFbf.Projector(doc=doc, pagenumber=pagenumber1, clip=argument1.get("clip"), move=argument1.get("move"))
+table_project2 = PDFbf.Projector(doc=doc, pagenumber=pagenumber1, clip=argument1.get("clip"), move=argument2.get("move"))
 doc = table_project2.project()
 
 updatedfilepath = filepath[:-4] + "_updated.pdf"
