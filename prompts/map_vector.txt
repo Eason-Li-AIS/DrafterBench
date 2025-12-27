@@ -100,7 +100,7 @@ doc = projector0.project()
 
 argument1=dict(clip=rectangle0, move=[-50,-20, rfpoint0])
 intersected_rebars1 = selector0.mode2_rebars_Cross_Touch_Intersect()
-projector1 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument1.get("clip"), sel_drawings=intersected_rebars1, cdrawings=selector0.selected_lines, rotation=argument1.get("move")）
+projector1 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument1.get("clip"), sel_drawings=intersected_rebars1, cdrawings=selector0.selected_lines, rotation=argument1.get("move"))
 doc = projector1.project()
 
 
