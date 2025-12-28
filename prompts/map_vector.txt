@@ -95,12 +95,12 @@ rectangle0, rfpoint0 = annoextractor.getclip_rfpoint(pagenumber=pagenumber0,rect
 argument0=dict(clip=rectangle0, rotation=['r', 45, rfpoint0])
 selector0 = PDFbf.selector(doc=doc,pagenumber=pagenumber0,clip=argument0.get("clip"))
 covered_drawings0 = selector0.mode1_drawings_Window_Cover_Enclosure()
-projector0 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument0.get("clip"), sel_drawings=covered_drawings0, cdrawings=selector0.selected_lines, move=argument0.get("rotation"))
+projector0 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument0.get("clip"), sel_drawings=covered_drawings0, cdrawings=selector0.selected_lines, rotation=argument0.get("rotation"))
 doc = projector0.project()
 
 argument1=dict(clip=rectangle0, move=[-50,-20, rfpoint0])
 intersected_rebars1 = selector0.mode2_rebars_Cross_Touch_Intersect()
-projector1 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument1.get("clip"), sel_drawings=intersected_rebars1, cdrawings=selector0.selected_lines, rotation=argument1.get("move"))
+projector1 = PDFbf.project_draw(doc=doc, pagenumber=pagenumber0, clip=argument1.get("clip"), sel_drawings=intersected_rebars1, cdrawings=selector0.selected_lines, move=argument1.get("move"))
 doc = projector1.project()
 
 
